@@ -1,9 +1,8 @@
 const Discord = require('discord.js')
 const Voice = require('@discordjs/voice')
-const config = require('./config.json')
-const pasta = require('./pasta.json')
+const config = require('./config')
+const pasta = require('./pasta')
 const command = require('./command')
-const fs = require('fs')
 const privateMessage = require('./private-message')
 const client = new Discord.Client({
     intents: [
@@ -68,10 +67,7 @@ client.on('ready', () => {
         const sub = connect.subscribe(player)
 
         if(sub){
-            if(message.content.includes('蹦蹦蹦')){
-
-                return message.channel.send('我中了兩槍')
-            }
+            setTimeout(() => sub.unsubscribe(), 200 * 1000)
         }
     })
 })
@@ -97,7 +93,7 @@ client.on('messageCreate', (message) => {
 
         return message.channel.send('我中了兩槍')
     }
-    if(randomMessage > 95){
+    if(message.content.includes('<@803998258396659753>')){
         
             setTimeout(function(){
                 message.channel.send("<@" + message.author.id + "> " + randomMessage1)
