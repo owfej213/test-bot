@@ -26,7 +26,7 @@ client.on('ready', () => {
     command(client, ['wakeup'], message => {
         const contents = message.content.replace('-wakeup <@', '').replace('>', '')
 
-        if(contents === '915590389774307398') return message.reply('你他媽當我白癡是不是?')
+        if(contents === '803998258396659753') return message.reply('你他媽當我白癡是不是?')
 
         if(contents.includes('@')) return message.reply('你他媽輸入錯了')
 
