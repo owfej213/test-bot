@@ -13,11 +13,29 @@ const client = new Discord.Client({
 })
 
 client.on('ready', () => {
-    console.log('The bot is ready')
+        console.log('The bot is ready')
+    //狀態定時改變
+    let counter = 0
 
-    setInterval (function () {
-        client.user.setActivity(`鐵籠戰與 ${client.guilds.cache.size} 個伺服器`)
-      }, 10 * 1000)
+    const statusOptions = [
+        `鐵籠戰與 ${client.guilds.cache.size} 個伺服器`,
+        '-help'
+    ]
+    const updateStatus = () =>{
+        client.user?.setPresence({
+            activities:[
+                {
+                    name : statusOptions[counter]
+                }
+            ]
+        })
+        if(++counter >= statusOptions.length){
+            counter = 0
+        }
+        setTimeout(updateStatus, 20 * 1000)
+    }
+    updateStatus()
+    
     //傳送私訊
     privateMessage(client, '-w', 'https://www.youtube.com/watch?v=RrAobUAsNkU')
 
@@ -27,21 +45,20 @@ client.on('ready', () => {
 
         if(contents === '803998258396659753') return message.reply('你他媽當我白癡是不是?')
 
-        if(contents.includes('@')) return message.reply('你他媽輸入錯了')
+        if(contents.includes('@') || contents.includes('&')) return message.reply('輸入錯誤')
 
-        if(message.member.permissions.has('ADMINISTRATOR')){
-            client.users.fetch(contents).then((user) => {
-                user.send('你快錯過今天的鐵籠戰了')
-              })
-        }else{
-            message.reply('你要有管理員權限')
-        }
+        client.users.fetch(contents).then((user) => {
+            user.send(`在**${message.guild.name}**伺服器的**${message.author.username}**提醒你快錯過今天與館長的鐵籠戰了`)
+            .catch(error => {
+                message.reply(`發送失敗，可能是他封鎖我了`)
+            })
+        })
     })
 
     command(client, ['山羌'], message =>{
         message.channel.send(pasta.three_shot)
     })
-
+    //在語音播放mp3
     command(client, ['fight'], message =>{
 
         const player = Voice.createAudioPlayer()
@@ -69,6 +86,20 @@ client.on('ready', () => {
         if(sub){
             setTimeout(() => sub.unsubscribe(), 200 * 1000)
         }
+    })
+
+    command(client, ['help'], message => {
+        let Embed = new Discord.MessageEmbed()
+        Embed.setTitle(`指令表\n`)
+            .addField(`-help`, `顯示指令表`, true)
+            .addField(`-w`, `收到館長的影片`, true)
+            .addField(`-山羌`, `傳承館長的精神`, true)
+            .addField(`-wakeup @某人`, `提醒他鐵籠戰快遲到了`, true)
+            .addField(`-fight`, `進入語音，館長有話要說`, true)
+            .addField(`-image`, `發送館長圖`, true)
+        message.channel.send({
+            embeds:[Embed]
+        })
     })
 })
 
